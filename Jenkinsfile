@@ -7,22 +7,22 @@ pipeline {
           }
     }
   
-  options { 
-        ansiColor('xterm')
-        parallelsAlwaysFailFast()
-    }
+//   options { 
+//         ansiColor('xterm')
+//         parallelsAlwaysFailFast()
+//     }
 
-	environment {
-        ENV = "dev"
+// 	environment {
+//         ENV = "dev"
 
-    }
+//     }
 
-	post {
-		always {
-			cleanWs()
+// 	post {
+// 		always {
+// 			cleanWs()
 
-		  }
-	  }
+// 		  }
+// 	  }
 	
 
     stages {
