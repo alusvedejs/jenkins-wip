@@ -155,14 +155,14 @@ pipeline {
 
 
 def build_container(name, ver) {
-    withDockerRegistry([credentialsId: 'eae7cd76-43f6-4cc1-8c16-7a44fd489090', url: "https://${REGISTRY_URL}" ]) {
+    withDockerRegistry([credentialsId: '7ee1c9b2-f766-4d87-a7bd-e8ce15cbfd22', url: "https://${REGISTRY_URL}" ]) {
 	def cImage = docker.build("${REGISTRY_URL}/artifactory/docker-sample-local/${name}", "-f Dockerfile .")
 	cImage.push("${ver}")
     }
 }
 
 def push_container(name, ver) {
-    withDockerRegistry([credentialsId: 'eae7cd76-43f6-4cc1-8c16-7a44fd489090', url: "https://${REGISTRY_URL}" ]) {
+    withDockerRegistry([credentialsId: '7ee1c9b2-f766-4d87-a7bd-e8ce15cbfd22', url: "https://${REGISTRY_URL}" ]) {
     def cImage = docker.image("${REGISTRY_URL}/artifactory/docker-sample-local/${name}:build")
     cImage.push("latest")
     cImage.push("${ver}")
