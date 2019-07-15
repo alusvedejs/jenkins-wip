@@ -27,46 +27,28 @@ pipeline {
 
     stages {
 
-        stage ('Checkout') {
-                steps {
-                    checkout([$class: 'GitSCM', branches: [[name: '*/master']], 
-                        doGenerateSubmoduleConfigurations: false, 
-                        extensions: [], 
-                        submoduleCfg: [], 
-                        userRemoteConfigs: [
-                            // [credentialsId: 'bitbucket', 
-                            url: 'https://github.com/alusvedejs/jenkins-wip.git']
-                            // ]
-                        ])
-                }
-        }
+        // stage ('Checkout') {
+        //         steps {
+        //             checkout([$class: 'GitSCM', branches: [[name: '*/master']], 
+        //                 doGenerateSubmoduleConfigurations: false, 
+        //                 extensions: [], 
+        //                 submoduleCfg: [], 
+        //                 userRemoteConfigs: [
+        //                     // [credentialsId: 'bitbucket', 
+        //                     url: 'https://github.com/alusvedejs/jenkins-wip.git']
+        //                     // ]
+        //                 ])
+        //         }
+        // }
 
-        stage ('Compile Stage') {
-
+        stage('Build') {
             steps {
-                withMaven(maven : 'maven_3_5_0') {
-                    sh 'mvn clean compile'
+                container('maven') {
+                    sh 'mvn package spring-boot:repackage -f sidm-rest/pom.xml'
+                    }
                 }
             }
-        }
-
-        stage ('Testing Stage') {
-
-            steps {
-                withMaven(maven : 'maven_3_5_0') {
-                    sh 'mvn test'
-                }
-            }
-        }
-
-
-        stage ('Deployment Stage') {
-            steps {
-                withMaven(maven : 'maven_3_5_0') {
-                    sh 'mvn deploy'
-                }
-            }
-        }
+    
     }
 }
 
