@@ -60,7 +60,7 @@ pipeline {
                 container('docker') {
                     sh '''
                         ls -latr
-                        docker build -t http://artifactory.onelum.host/artifactory/docker-sample-local/mycontainer:0.1  .
+                        docker build -t artifactory.onelum.host/artifactory/docker-sample-local/mycontainer:0.1  .
                         '''
                     }
                 }
