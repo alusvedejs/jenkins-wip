@@ -46,7 +46,7 @@ pipeline {
                 container('maven') {
                     sh '''
                         ls -latr
-                        mvn package spring-boot:repackage -f sidm-rest/pom.xml
+                        mvn package spring-boot:repackage -f pom.xml
                         '''
                     }
                 }
