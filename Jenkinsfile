@@ -55,21 +55,21 @@ pipeline {
 
                         // mvn package spring-boot:repackage -f pom.xml
 
-        stage('docker') {
-            steps {
-                container('docker') {
-                    sh '''
-                        ls -latr
-                        docker build -t artifactory.onelum.host/artifactory/docker-sample-local/mycontainer:0.1  .
-                        '''
-                    }
-                }
-            }
+        // stage('docker') {
+        //     steps {
+        //         container('docker') {
+        //             sh '''
+        //                 ls -latr
+        //                 docker build -t artifactory.onelum.host/artifactory/docker-sample-local/testcontainer:0.1  .
+        //                 '''
+        //             }
+        //         }
+        //     }
 
         stage('build') {
             steps {
                 container('docker') {
-                    build_container("mycontainer",'build')
+                    build_container("testcontainer",'build')
                     }
                 }
             }
@@ -77,7 +77,7 @@ pipeline {
         stage('push') {
             steps {
                 container('docker') {
-                    push_container("mycontainer","0.0.1")
+                    push_container("testcontainer","0.0.1")
                     }
                 }
             }
