@@ -44,7 +44,10 @@ pipeline {
         stage('Build') {
             steps {
                 container('maven') {
-                    sh 'mvn package spring-boot:repackage -f sidm-rest/pom.xml'
+                    sh '''
+                        ls -latr
+                        mvn package spring-boot:repackage -f sidm-rest/pom.xml
+                        '''
                     }
                 }
             }
