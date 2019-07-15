@@ -59,7 +59,7 @@ pipeline {
                 container('docker') {
                     sh '''
                         ls -latr
-                        docker build mycontainer  .
+                        docker build -t mycontainer  .
                         '''
                     }
                 }
