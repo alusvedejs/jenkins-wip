@@ -36,7 +36,7 @@ pipeline {
                         userRemoteConfigs: [
                             // [credentialsId: 'bitbucket', 
                             url: 'https://github.com/alusvedejs/jenkins-wip.git']
-                            ]
+                            // ]
                         ])
                 }
         }
