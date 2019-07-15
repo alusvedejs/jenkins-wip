@@ -46,12 +46,25 @@ pipeline {
                 container('maven') {
                     sh '''
                         ls -latr
-                        mvn package spring-boot:repackage -f pom.xml
+                        mvn --version
                         '''
                     }
                 }
             }
-    
+
+                        // mvn package spring-boot:repackage -f pom.xml
+
+        stage('docker') {
+            steps {
+                container('docker') {
+                    sh '''
+                        ls -latr
+                        docker ps
+                        '''
+                    }
+                }
+            }
+
     }
 }
 

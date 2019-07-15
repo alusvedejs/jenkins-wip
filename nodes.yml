@@ -5,24 +5,24 @@ metadata:
     product: optibet-admin
 spec:
   containers:
-  # - name: docker
-  #   image: docker
-  #   command: ['cat']
-  #   tty: true
-  #   volumeMounts:
-  #     - name: docker-sock
-  #       mountPath: /var/run/docker.sock
+  - name: docker
+    image: docker
+    command: ['cat']
+    tty: true
+    volumeMounts:
+      - name: docker-sock
+        mountPath: /var/run/docker.sock
   - name: maven
     image: maven:3.6.1-jdk-12
     command: ['cat']
     tty: true
   # imagePullSecrets:
   #   - name: docker-login-secret
-  # volumes:
+  volumes:
   # - name: gcloud-secret
   #   secret: 
   #     secretName: gcloud-svc-account
-  # - name: docker-sock
-  #   hostPath:
-  #     path: /var/run/docker.sock
+  - name: docker-sock
+    hostPath:
+      path: /var/run/docker.sock
 
