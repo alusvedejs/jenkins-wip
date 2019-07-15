@@ -88,11 +88,15 @@ pipeline {
 // S00085@luminorgroup.com
 // S00085%40luminorgroup.com
 // s00085%40luminorgroup.com
-
+// s00085@luminorgroup.com
 // nMUuvpi2N7KdDGrlldB3
+// S00085
+// AKCp5dKYs1qZcY6ez6jEAWLTXndMyi5G83WMJy2AfsNVq41EYZwQWZkpFFo7VGA2b19vm8MnY
 
 // docker push artifactory.onelum.host/artifactory/docker-sample-local/mycontainer:0.1
 
+// docker build -t artifactory.onelum.host/local-docker-repo/mycontainer .
+// docker push artifactory.onelum.host/local-docker-repo/mycontainer
 
     }
 }
@@ -156,14 +160,14 @@ pipeline {
 
 def build_container(name, ver) {
     withDockerRegistry([credentialsId: '7ee1c9b2-f766-4d87-a7bd-e8ce15cbfd22', url: "https://${REGISTRY_URL}" ]) {
-	def cImage = docker.build("${REGISTRY_URL}/artifactory/docker-sample-local/${name}", "-f Dockerfile .")
+	def cImage = docker.build("${REGISTRY_URL}/local-docker-repo/${name}", "-f Dockerfile .")
 	cImage.push("${ver}")
     }
 }
 
 def push_container(name, ver) {
     withDockerRegistry([credentialsId: '7ee1c9b2-f766-4d87-a7bd-e8ce15cbfd22', url: "https://${REGISTRY_URL}" ]) {
-    def cImage = docker.image("${REGISTRY_URL}/artifactory/docker-sample-local/${name}:build")
+    def cImage = docker.image("${REGISTRY_URL}/local-docker-repo/${name}:build")
     cImage.push("latest")
     cImage.push("${ver}")
     }
