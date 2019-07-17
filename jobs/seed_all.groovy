@@ -58,3 +58,10 @@ job('Seed All') {
 //     }
 //   }
 // }
+
+
+// scm {
+//   git(buildRepoName, branchName) {
+//     createTag(false)
+//   }
+// }
