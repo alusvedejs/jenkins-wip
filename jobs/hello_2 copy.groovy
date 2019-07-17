@@ -1,4 +1,4 @@
-job('Hello 2') {
+job('Hello 2copy') {
   steps {
     shell('echo "Hello World!"')
   }
