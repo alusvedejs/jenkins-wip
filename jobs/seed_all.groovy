@@ -1,6 +1,11 @@
 job('Seed All') {
   scm {
-    git ('https://github.com/alusvedejs/jenkins-wip.git',{node -> node / 'extensions' << '' })
+    git {
+      remote {
+        url('https://github.com/alusvedejs/jenkins-wip.git')
+      }
+      branch('master')
+    }
   }
   steps {
     dsl {
@@ -38,6 +43,18 @@ job('Seed All') {
 //         }
 
 //       }
+//     }
+//   }
+// }
+
+
+// job('example') {
+//   scm {
+//     git {
+//       remote {
+//         url('https://github.com/jenkinsci/job-dsl-plugin.git')
+//       }
+//       branch('master')
 //     }
 //   }
 // }
