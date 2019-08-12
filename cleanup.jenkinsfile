@@ -1,0 +1,108 @@
+pipeline {
+
+	agent {
+        kubernetes {
+        label 'helm-delete'
+        defaultContainer 'jnlp'
+        yaml """
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    product: helm-delete
+spec:
+  containers:
+  - name: kubectl-helm
+    image: registry.gitlab.com/liflandgaming/docker/tools/kubectl-helm:b55-97091b9
+    command: ['cat']
+    tty: true
+    volumeMounts:
+      - name: gcloud-secret
+        mountPath: /opt/config
+  imagePullSecrets:
+    - name: docker-login-secret
+  imagePullPolicy: Always
+  volumes:
+  - name: gcloud-secret
+    secret: 
+      secretName: gcloud-svc-account
+"""
+        }
+    }
+
+    options { 
+        ansiColor('xterm')
+        parallelsAlwaysFailFast()
+    }
+
+	environment {
+        THIS_NAMESPACE = "dev"
+        DELETECOUNT = "0"
+    }
+
+	post {
+		always {
+		    cleanWs()
+		}
+	}
+	
+	stages {
+
+        stage('FIND') {
+            steps{
+                script{
+                    container('kubectl-helm') {
+                        sh """
+                            gcloud auth activate-service-account --key-file /opt/config/jenkins-k8s-scale-opl.json
+                            gcloud container clusters get-credentials scale-opl-fin01-private-k8s --zone europe-north1-a --project scale-opl --internal-ip
+                            helm ls --namespace ${THIS_NAMESPACE} -dr '\-mr[0-9]'
+                        """
+                        DELETECOUNT = sh ( script: "helm ls --namespace ${THIS_NAMESPACE} '\-mr[0-9]' | grep -v \
+                            -e "$(date  +'%a %b  %-d' | awk '{gsub("^0"," ",$3)}1')" \
+                            -e "$(date -v-1d +'%a %b  %-d' | awk '{gsub("^0"," ",$3)}1')" \
+                            -e "$(date -v-2d +'%a %b  %-d' | awk '{gsub("^0"," ",$3)}1')" \
+                            -e "$(date -v-3d +'%a %b  %-d' | awk '{gsub("^0"," ",$3)}1')" \
+                            -e "$(date -v-4d +'%a %b  %-d' | awk '{gsub("^0"," ",$3)}1')" \
+                            | tail -n +2 | cut -f1 | wc -l", returnStdout: true).trim()
+                        echo "found ${DELETECOUNT} releases to delete"
+                    }
+                }  	
+            }
+        }
+
+        stage('DELETE') {
+            steps{
+                script{
+                    if (env.DELETECOUNT > 0) {
+                        container('kubectl-helm') {
+                            sh """
+                                echo "following releases will be deleted:"
+                                helm ls --namespace ${THIS_NAMESPACE} '\-mr[0-9]' | grep -v \
+                                    -e "$(date  +'%a %b  %-d' | awk '{gsub("^0"," ",$3)}1')" \
+                                    -e "$(date -v-1d +'%a %b  %-d' | awk '{gsub("^0"," ",$3)}1')" \
+                                    -e "$(date -v-2d +'%a %b  %-d' | awk '{gsub("^0"," ",$3)}1')" \
+                                    -e "$(date -v-3d +'%a %b  %-d' | awk '{gsub("^0"," ",$3)}1')" \
+                                    -e "$(date -v-4d +'%a %b  %-d' | awk '{gsub("^0"," ",$3)}1')" \
+                                    | tail -n +2 | cut -f1
+                                echo "DELETING..."
+                                helm  delete --purge $(helm ls --namespace ${THIS_NAMESPACE} '\-mr[0-9]' | grep -v \
+                                    -e "$(date  +'%a %b  %-d' | awk '{gsub("^0"," ",$3)}1')" \
+                                    -e "$(date -v-1d +'%a %b  %-d' | awk '{gsub("^0"," ",$3)}1')" \
+                                    -e "$(date -v-2d +'%a %b  %-d' | awk '{gsub("^0"," ",$3)}1')" \
+                                    -e "$(date -v-3d +'%a %b  %-d' | awk '{gsub("^0"," ",$3)}1')" \
+                                    -e "$(date -v-4d +'%a %b  %-d' | awk '{gsub("^0"," ",$3)}1')" \
+                                    | tail -n +2 | cut -f1 )
+                            """
+                        }
+                    }
+                    else {
+                        sh """
+                            echo "No releases to delete."
+                            echo "SKIPPING"
+                        """
+                    }  
+                }
+            }  	
+        }
+	}
+}
